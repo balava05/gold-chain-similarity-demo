@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gold Chain Image Search</title>
+</head>
+<body>
+    <h1>Upload a Gold Chain Image</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="query_image" required>
+        <input type="submit" value="Search">
+    </form>
+
+    {% if uploaded_image %}
+        <h3>Uploaded Image:</h3>
+        <img src="{{ url_for('uploaded_file', filename=uploaded_image) }}" width="200">
+        <h3>Top 5 Matches:</h3>
+        {% for match, score in matches %}
+            <div style="display:inline-block; text-align:center; margin:10px;">
+                <img src="{{ url_for('static', filename='images/' ~ match) }}" width="200"><br>
+                <small>{{ match }}<br>Distance: {{ '%.2f'|format(score) }}</small>
+            </div>
+        {% endfor %}
+    {% endif %}
+</body>
+</html>
