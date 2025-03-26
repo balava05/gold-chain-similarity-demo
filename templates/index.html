@@ -1,25 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gold Chain Image Search</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
+        
+        body {
+            background-color: #fdf4e3;
+            font-family: 'Playfair Display', serif;
+        }
+        .card {
+            border: 2px solid #d4af37;
+            border-radius: 10px;
+        }
+        .btn-primary {
+            background-color: #d4af37;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #b8860b;
+        }
+        .header {
+            color: #b8860b;
+            font-weight: bold;
+            font-size: 2rem;
+        }
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo-container img {
+            width: 150px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Upload a Gold Chain Image</h1>
-    <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="query_image" required>
-        <input type="submit" value="Search">
-    </form>
+    <div class="container py-5">
+        <div class="logo-container">
+            <img src="./royal_chains_private_limited_logo.jpg" alt="Royal Chains Logo">
+        </div>
+        <div class="card shadow-sm p-4 bg-white">
+            <h1 class="text-center mb-4 header">Gold Chain Image Search</h1>
+            <form method="POST" enctype="multipart/form-data" class="text-center">
+                <input type="file" name="query_image" class="form-control mb-3" required>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
 
-    {% if uploaded_image %}
-        <h3>Uploaded Image:</h3>
-        <img src="{{ url_for('uploaded_file', filename=uploaded_image) }}" width="200">
-        <h3>Top 5 Matches:</h3>
-        {% for match, score in matches %}
-            <div style="display:inline-block; text-align:center; margin:10px;">
-                <img src="{{ url_for('static', filename='images/' ~ match) }}" width="200"><br>
-                <small>{{ match }}<br>Distance: {{ '%.2f'|format(score) }}</small>
-            </div>
-        {% endfor %}
-    {% endif %}
+            {% if uploaded_image %}
+                <div class="text-center mt-4">
+                    <h3 class="header">Uploaded Image:</h3>
+                    <img src="{{ url_for('uploaded_file', filename=uploaded_image) }}" class="img-thumbnail border border-warning" width="250">
+                </div>
+                <h3 class="text-center mt-4 header">Top 5 Matches</h3>
+                <div class="d-flex flex-wrap justify-content-center">
+                    {% for match, score in matches %}
+                        <div class="card m-2" style="width: 220px;">
+                            <img src="{{ url_for('static', filename='images/' ~ match) }}" class="card-img-top">
+                            <div class="card-body text-center">
+                                <p class="card-text text-dark"><strong>{{ match }}</strong></p>
+                                <p class="text-muted">Distance: {{ '%.2f'|format(score) }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
