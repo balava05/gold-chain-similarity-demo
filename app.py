@@ -3,7 +3,7 @@ from flask import Flask, request, render_template, send_from_directory
 from PIL import Image
 import numpy as np
 import torch
-import torchvision.models as models
+from torchvision.models import resnet50, ResNet50_Weights
 import torchvision.transforms as transforms
 import faiss
 
@@ -16,7 +16,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Load model
 device = torch.device('cpu')
-model = models.resnet50(pretrained=True)
+model = resnet50(weights=ResNet50_Weights.DEFAULT)
 model = torch.nn.Sequential(*list(model.children())[:-1])
 model.eval().to(device)
 
@@ -64,7 +64,8 @@ def index():
 
             query_vec = get_embedding(filepath).astype('float32').reshape(1, -1)
             D, I = faiss_index.search(query_vec, k=5)
-            matches = [(filenames[idx], float(D[0][i])) for i, idx in enumerate(I[0])]
+            similarity_scores = [100 * (1 / (1 + D[0][i])) for i in range(len(I[0]))]
+            matches = [(filenames[idx], similarity_scores[i]) for i, idx in enumerate(I[0])]
 
             return render_template('index.html', uploaded_image=file.filename, matches=matches)
 
@@ -75,4 +76,4 @@ def uploaded_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
